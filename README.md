@@ -1,5 +1,14 @@
 # Smart Recipe Generator
-# Github link ->
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+# Github link -> https://github.com/sandeepsv8055/smart-recipe-generator
+# render link -> https://smart-recipe-generator-3ena.onrender.com/
+.............................................................................................................................................
+
+
+
+
+
 A full-stack application that leverages OCR and ingredient-based search to recommend recipes. Built with Node.js, Express, and Tesseract.js, it enables users to upload images of ingredient lists or manually enter ingredients to discover matching recipes with nutritional and dietary information.
 
 ## Table of Contents
