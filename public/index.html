@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Smart Recipe Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      color: #2d2d2d;
+    }
+
+    /* Heading */
+    h1.heading {
+      font-size: 40px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+      color: #fff;
+      text-shadow: 2px 3px 10px rgba(0,0,0,0.3);
+      animation: fadeIn 1.2s ease-in-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Controls Box */
+    .controls {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 15px auto;
+      max-width: 800px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      animation: popUp 0.8s ease-in-out forwards;
+    }
+
+    @keyframes popUp {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .controls h3 {
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .controls p {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* Inputs */
+    input, select, button {
+      padding: 12px 16px;
+      margin: 8px 5px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    input, select {
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+    }
+
+    /* Recipe Section */
+    h2 {
+      margin-top: 30px;
+      text-align: center;
+      color: #fff;
+      font-weight: 600;
+      text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+    }
+
+    #recipes {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .recipe-card {
+      background: linear-gradient(135deg, #fff6f6, #fefefe);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      transition: all 0.3s ease-in-out;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    }
+
+    .recipe-card h3 {
+      margin-bottom: 10px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .recipe-card ul {
+      margin: 5px 0 10px 18px;
+      padding: 0;
+    }
+
+    .recipe-card .muted {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Blinking Alert */
+    .allrt {
+      animation: blink 1.8s infinite ease-in-out;
+      font-weight: bold;
+      color: #d90429;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1.heading { font-size: 28px; }
+      h2 { font-size: 20px; }
+      .controls { padding: 15px; }
+      .recipe-card { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="heading" style="color: #0051ff;">🍳 Smart Recipe Generator</h1>
+
+  <div class="controls upload">
+    <h3>Upload an Image of Ingredients</h3>
+    <p class="allrt">⚠️ Don't upload handwritten text</p>
+    <input type="file" id="fileInput" accept="image/*" />
+    <button onclick="uploadImage()">📤 Upload & Analyze</button>
+  </div>
+
+  <div class="controls">
+    <h3>Enter ingredients (comma-separated):</h3>
+    <input type="text" id="ingredientInput" placeholder="e.g., tomato, rice, onion" />
+    <button id="searchBtn">🔍 Find Recipes</button>
+  </div>
+
+  <div class="controls">
+    <label>Sort by:
+      <select id="sortOption">
+        <option value="">None</option>
+        <option value="timeAsc">Cooking Time ↑</option>
+        <option value="timeDesc">Cooking Time ↓</option>
+        <option value="difficulty">Difficulty</option>
+      </select>
+    </label>
+
+    <label>Dietary:
+      <select id="dietFilter">
+        <option value="">All</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="non-vegetarian">Non-Vegetarian</option>
+        <option value="vegan">Vegan</option>
+      </select>
+    </label>
+
+    <button id="applyFilter">✨ Apply</button>
+  </div>
+
+  <h2>🍲 Suggested Recipes:</h2>
+  <div id="recipes"></div>
+
+  <script>
+    let lastResults = [];
+
+    async function uploadImage() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+      if (!file) return alert("Please select a file first!");
+
+      try {
+        const response = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: await file.arrayBuffer()
+        });
+        const data = await response.json();
+        lastResults = data.recipes || [];
+        renderRecipes(lastResults);
+      } catch (err) {
+        console.error(err);
+        alert("Error analyzing image");
+      }
+    }
+
+    function renderRecipes(recipes) {
+      const recipesDiv = document.getElementById("recipes");
+      recipesDiv.innerHTML = "";
+      if (!recipes || recipes.length === 0) {
+        recipesDiv.innerHTML = "<p style='text-align:center;'>😞 No matching recipes found.</p>";
+        return;
+      }
+      recipes.forEach(r => {
+        const card = document.createElement("div");
+        card.className = "recipe-card";
+        card.innerHTML = `
+          <h3>🍴 ${r.name}</h3>
+          <p><b>Ingredients:</b> ${r.ingredients.join(", ")}</p>
+          <p><b>Steps:</b></p>
+          <ul>${r.steps.map(s => `<li>${s}</li>`).join("")}</ul>
+          <p><b>Nutrition:</b> ${r.nutrition.calories} cal, ${r.nutrition.protein}g protein</p>
+          <p class="muted">⚡ Difficulty: ${r.difficulty} | ⏱ ${r.cookingTime} mins | 🥗 ${r.dietary}</p>
+        `;
+        recipesDiv.appendChild(card);
+      });
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", async () => {
+      const input = document.getElementById("ingredientInput").value;
+      if (!input.trim()) return alert("Enter some ingredients first!");
+      const ingredients = input.split(",").map(i => i.trim());
+
+      const res = await fetch("/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ingredients })
+      });
+      const data = await res.json();
+      lastResults = data.recipes || [];
+      renderRecipes(lastResults);
+    });
+
+    document.getElementById("applyFilter").addEventListener("click", () => {
+      let results = [...lastResults];
+      const sortOption = document.getElementById("sortOption").value;
+      const dietFilter = document.getElementById("dietFilter").value;
+
+      if (dietFilter) results = results.filter(r => r.dietary.toLowerCase() === dietFilter);
+      if (sortOption === "timeAsc") results.sort((a,b)=>a.cookingTime-b.cookingTime);
+      if (sortOption === "timeDesc") results.sort((a,b)=>b.cookingTime-a.cookingTime);
+      if (sortOption === "difficulty") {
+        const order = { easy: 1, medium: 2, hard: 3 };
+        results.sort((a,b)=>order[a.difficulty]-order[b.difficulty]);
+      }
+
+      renderRecipes(results);
+    });
+  </script>
+</body>
+</html>
