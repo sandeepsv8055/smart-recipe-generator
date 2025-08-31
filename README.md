@@ -1,5 +1,5 @@
 # Smart Recipe Generator
-
+# Github link ->
 A full-stack application that leverages OCR and ingredient-based search to recommend recipes. Built with Node.js, Express, and Tesseract.js, it enables users to upload images of ingredient lists or manually enter ingredients to discover matching recipes with nutritional and dietary information.
 
 ## Table of Contents
